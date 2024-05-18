@@ -1,5 +1,8 @@
 # main.py
+'''
+TODO: add support for vacations/large single purchases
 
+'''
 from stock_sim.sim_engine import run_2v_sims, run_stat_sim, run_time_sim
 from stock_sim.finance import tax_rates
 
@@ -55,9 +58,11 @@ def main():
     }
     
     run_2v_sims(params, 
-                {'min': 100_000, 'max': 1_000_000, 'increment': 1_000, 'name': 'income'},
-                {'min': 1.00, 'max': 1.20, 'increment': 0.001, 'name': 'avg_growth'}
+                {'min': 40_000, 'max': 250_000, 'increment': 1_000, 'name': 'income'},
+                {'min': 250_000, 'max': 1_500_000, 'increment': 10_000, 'name': 'house_cost'}
                 )
+    run_stat_sim(params, 5000)
+    run_time_sim(params)
 
 if __name__ == '__main__':
     main()
