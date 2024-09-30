@@ -1,175 +1,179 @@
 import numpy as np
+from datetime import timedelta
+import pandas as pd
+import random
+from .utils import pull_random_range
 
 tax_rates = {
     "virginia_us_tax_rates_single": {
-                "federal": {
-                    "dividend": {
-                        "0%": [0, 0],
-                        "15%": [44626, 0],
-                        "20%": [492301, 0]
-                    },
-                    "income": {
-                        "10%": [0, 0],
-                        "12%": [11000, 1100],
-                        "22%": [44726, 5147],
-                        "24%": [95376, 16290],
-                        "32%": [182101, 37104],
-                        "35%": [231251, 52832],
-                        "37%": [578126, 174238]
-                    },
-                    "medicare": {
-                        "1.45%": [0,0]
-                    },
-                    "social_security": {
-                        "6.2%": [0,0],
-                        "0%": [147000, 9114]
-                    }
-                },
-                "state": { # Virginia State Tax, Florida would be 0%
-                    "income": { # additive to federal
-                        "2%": [0, 0],
-                        "3%": [3001, 60],
-                        "5%": [5001, 120],
-                        "5.75%": [17001, 720]
-                    }
-                },
-                "other": {
-
-                }
+        "federal": {
+            "dividend": {
+                "0%": [0, 0],
+                "15%": [44626, 0],
+                "20%": [492301, 0]
             },
-"florida_married_us_tax_rates": {
-                "federal": {
-                    "dividend": {
-                        "0%": [0, 0],
-                        "15%": [83350, 0],
-                        "20%": [517201, 0]
-                    },
-                    "income": {
-                        "10%": [0, 0],
-                        "12%": [22000, 2200],
-                        "22%": [89451, 10294],
-                        "24%": [190751, 32580],
-                        "32%": [364201, 74208],
-                        "35%": [462501, 105664],
-                        "37%": [693751, 186601]
-                    },
-                    "medicare": {
-                        "1.45%": [0,0]
-                    },
-                    "social security": {
-                        "6.2%": [0,0],
-                        "0%": [147000, 9114]
-                    }
-                },
-                "other": {
-
-                }
+            "income": {
+                "10%": [0, 0],
+                "12%": [11000, 1100],
+                "22%": [44726, 5147],
+                "24%": [95376, 16290],
+                "32%": [182101, 37104],
+                "35%": [231251, 52832],
+                "37%": [578126, 174238]
             },
-"virginia_married_us_tax_rates": {
-                "federal": {
-                    "dividend": {
-                        "0%": [0, 0],
-                        "15%": [83350, 0],
-                        "20%": [517201, 0]
-                    },
-                    "income": {
-                        "10%": [0, 0],
-                        "12%": [22000, 2200],
-                        "22%": [89451, 10294],
-                        "24%": [190751, 32580],
-                        "32%": [364201, 74208],
-                        "35%": [462501, 105664],
-                        "37%": [693751, 186601]
-                    },
-                    "medicare": {
-                        "1.45%": [0,0]
-                    },
-                    "social security": {
-                        "6.2%": [0,0],
-                        "0%": [147000, 9114]
-                    }
-                },
-                "state": {
-                    "income": { # additive to federal
-                        "2%": [0, 0],
-                        "3%": [3001, 60],
-                        "5%": [5001, 120],
-                        "5.75%": [17001, 720]
-                    }
-                },
-                "other": {
-
-                }},
-"andorra_tax_rates": {
-                "federal": {
-                    "dividend": {
-                        "0%": [0, 0],
-                        "15%": [44626, 0],
-                        "20%": [492301, 0]
-                    },
-                    "income": {
-                        "0%": [0, 0],
-                        "10%": [42334, 0],
-                    }
-                }},
-"virginia_us_tax_rates_single_flat": {
-                "federal_income": {
-                        "10%": [0, 0],
-                        "12%": [11000, 1100],
-                        "22%": [44726, 5147],
-                        "24%": [95376, 16290],
-                        "32%": [182101, 37104],
-                        "35%": [231251, 52832],
-                        "37%": [578126, 174238]
-                    },
-                "federal_dividend": {
-                        "0%": [0, 0],
-                        "15%": [44626, 0],
-                        "20%": [492301, 0]
-                    },
-                "state_income": {
-                        "2%": [0, 0],
-                        "3%": [3001, 60],
-                        "5%": [5001, 120],
-                        "5.75%": [17001, 720]
-                    },
-                "federal_medicare":{
-                        "1.45%": [0,0]
-                    },
-                "federal_social-security": {
-                        "6.2%": [0,0],
-                        "0%": [147000, 9114]
-                    },
+            "medicare": {
+                "1.45%": [0,0]
             },
-"virginia_us_tax_rates_married_flat": {
-                "federal_income": {
-                        "10%": [0, 0],
-                        "12%": [22000, 2200],
-                        "22%": [89451, 10294],
-                        "24%": [190751, 32580],
-                        "32%": [364201, 74208],
-                        "35%": [462501, 105664],
-                        "37%": [693751, 186601]
-                    },
-                "federal_dividend": {
-                        "0%": [0, 0],
-                        "15%": [83350, 0],
-                        "20%": [517201, 0]
-                    },
-                "state_income": {
-                        "2%": [0, 0],
-                        "3%": [3001, 60],
-                        "5%": [5001, 120],
-                        "5.75%": [17001, 720]
-                    },
-                "federal_medicare":{
-                        "1.45%": [0,0]
-                    },
-                "federal_social-security": {
-                        "6.2%": [0,0],
-                        "0%": [147000, 9114]
-                    },
+            "social_security": {
+                "6.2%": [0,0],
+                "0%": [147000, 9114]
             }
+        },
+        "state": { # Virginia State Tax, Florida would be 0%
+            "income": { # additive to federal
+                "2%": [0, 0],
+                "3%": [3001, 60],
+                "5%": [5001, 120],
+                "5.75%": [17001, 720]
+            }
+        },
+        "other": {
+
+        }
+    },
+    "florida_married_us_tax_rates": {
+            "federal": {
+                "dividend": {
+                    "0%": [0, 0],
+                    "15%": [83350, 0],
+                    "20%": [517201, 0]
+                },
+                "income": {
+                    "10%": [0, 0],
+                    "12%": [22000, 2200],
+                    "22%": [89451, 10294],
+                    "24%": [190751, 32580],
+                    "32%": [364201, 74208],
+                    "35%": [462501, 105664],
+                    "37%": [693751, 186601]
+                },
+                "medicare": {
+                    "1.45%": [0,0]
+                },
+                "social security": {
+                    "6.2%": [0,0],
+                    "0%": [147000, 9114]
+                }
+            },
+            "other": {
+
+            }
+        },
+    "virginia_married_us_tax_rates": {
+        "federal": {
+            "dividend": {
+                "0%": [0, 0],
+                "15%": [83350, 0],
+                "20%": [517201, 0]
+            },
+            "income": {
+                "10%": [0, 0],
+                "12%": [22000, 2200],
+                "22%": [89451, 10294],
+                "24%": [190751, 32580],
+                "32%": [364201, 74208],
+                "35%": [462501, 105664],
+                "37%": [693751, 186601]
+            },
+            "medicare": {
+                "1.45%": [0,0]
+            },
+            "social security": {
+                "6.2%": [0,0],
+                "0%": [147000, 9114]
+            }
+        },
+        "state": {
+            "income": { # additive to federal
+                "2%": [0, 0],
+                "3%": [3001, 60],
+                "5%": [5001, 120],
+                "5.75%": [17001, 720]
+            }
+        },
+        "other": {
+
+        }},
+    "andorra_tax_rates": {
+        "federal": {
+            "dividend": {
+                "0%": [0, 0],
+                "15%": [44626, 0],
+                "20%": [492301, 0]
+            },
+            "income": {
+                "0%": [0, 0],
+                "10%": [42334, 0],
+            }
+        }},
+    "virginia_us_tax_rates_single_flat": {
+        "federal_income": {
+                "10%": [0, 0],
+                "12%": [11000, 1100],
+                "22%": [44726, 5147],
+                "24%": [95376, 16290],
+                "32%": [182101, 37104],
+                "35%": [231251, 52832],
+                "37%": [578126, 174238]
+            },
+        "federal_dividend": {
+                "0%": [0, 0],
+                "15%": [44626, 0],
+                "20%": [492301, 0]
+            },
+        "state_income": {
+                "2%": [0, 0],
+                "3%": [3001, 60],
+                "5%": [5001, 120],
+                "5.75%": [17001, 720]
+            },
+        "federal_medicare":{
+                "1.45%": [0,0]
+            },
+        "federal_social-security": {
+                "6.2%": [0,0],
+                "0%": [147000, 9114]
+            },
+    },
+    "virginia_us_tax_rates_married_flat": {
+        "federal_income": {
+                "10%": [0, 0],
+                "12%": [22000, 2200],
+                "22%": [89451, 10294],
+                "24%": [190751, 32580],
+                "32%": [364201, 74208],
+                "35%": [462501, 105664],
+                "37%": [693751, 186601]
+            },
+        "federal_dividend": {
+                "0%": [0, 0],
+                "15%": [83350, 0],
+                "20%": [517201, 0]
+            },
+        "state_income": {
+                "2%": [0, 0],
+                "3%": [3001, 60],
+                "5%": [5001, 120],
+                "5.75%": [17001, 720]
+            },
+        "federal_medicare":{
+                "1.45%": [0,0]
+            },
+        "federal_social-security": {
+                "6.2%": [0,0],
+                "0%": [147000, 9114]
+            },
+    }
 }
 
 class Investments:
@@ -177,7 +181,7 @@ class Investments:
     Financial Portfolio including all asset types and functions to handle how they change
     '''
     def __init__(self, value: float, income: float, market_growth: float, dividend_growth: float, expenses: dict,
-                tax_rates: dict, assets: dict=None, std_dev: float=0):
+                tax_rates: dict, assets: dict=None, std_dev: float=0, backtest: bool=False, years: int=0, fixed_start_date = None, tick="^GSPC"):
         if assets is None:
             assets = {'cash': 0, 'stocks': 0, 'bonds': 0}
         self.income = income # Annual income
@@ -188,6 +192,18 @@ class Investments:
         self.assets = assets # Dictionary of all asset valuations
         self.assets['stocks'] += value
         self.std_dev = std_dev # Average volatility
+        self.contributions = 0
+        self.backtest = backtest # Backtest
+        self.backtest_idx = 0
+        self.backtest_data = []
+        self.years = years
+        self.year = 0
+        self.week = 0
+        self.tick = tick
+        self.starting_date = fixed_start_date
+        self.tax_cache = {}
+        if self.backtest:
+            self.backtest_data = pull_random_range(f'./stock_sim/database/{self.tick}.csv', years, fixed_start_date)
 
     def calculate_tax_bracket(self, income: float) -> dict:
         '''
@@ -208,6 +224,12 @@ class Investments:
                 tax_bracket[tax_type] = applicable_rate
 
         return tax_bracket
+
+    def calculate_taxes_owed_cached(self, income: float, dividends: float=0)-> tuple[dict, float, dict]:
+        cache_key = (income, dividends)
+        if cache_key not in self.tax_cache:
+            self.tax_cache[cache_key] = self.calculate_taxes_owed(income, dividends)
+        return self.tax_cache[cache_key]
 
     def calculate_taxes_owed(self, income: float, dividends: float=0) -> tuple[dict, float, dict]:
         '''
@@ -285,6 +307,7 @@ class Investments:
         if self.assets['cash'] >= amount:
             self.assets['stocks'] += amount
             self.assets['cash'] -= amount
+            self.contributions += amount
         else:
             # print("out of cash")
             pass
@@ -300,6 +323,7 @@ class Investments:
         amount -= (self.assets['cash']-cash_floor)
         self.assets['cash'] = cash_floor
         if amount >= self.assets['stocks']:
+
             amount -= self.assets['stocks']
             self.assets['stocks'] = 0
         else:
@@ -325,13 +349,22 @@ class Investments:
 
     def compound_stocks(self, rate: float, contribution: float, std_dev: float=0, weeks: int=1) -> None:
         """Applies compounding model to stock growth and handles investment event"""
-        if std_dev != 0:
-            period_std_deviation = std_dev / (52 / weeks)**0.5
-            period_growth = (rate - 1) * weeks / 52
-            growth = 1 + np.random.normal(period_growth, period_std_deviation)
+        if not self.backtest:
+            if std_dev != 0:
+                period_std_deviation = std_dev / (52 / weeks)**0.5
+                period_growth = (rate - 1) * weeks / 52
+                growth = 1 + np.random.normal(period_growth, period_std_deviation)
+            else:
+                growth = 1 + weeks * (rate - 1) / 52
+                
+            self.assets['stocks'] *= growth
         else:
-            growth = 1 + weeks * (rate - 1) / 52
-        self.assets['stocks'] *= growth
+            curr_val = self.backtest_data[self.backtest_idx]
+            self.backtest_idx += 5
+            next_val = self.backtest_data[self.backtest_idx]
+            growth_ratio = next_val/curr_val
+            self.assets['stocks'] *= growth_ratio
+        
         self.invest_in_etf(contribution)
 
     def calculate_passive_income(self, percent_use_after_retirement: float) -> float:
@@ -341,7 +374,7 @@ class Investments:
                 * percent_use_after_retirement))[0]['federal_dividend'])
 
     def run_investment_strategy(self, post_tax: float, strategy: str="Basic", invest_factor: float=0.25,
-                                cash_base_factor: float = 0.05, cash_base_amt: float = 75000) -> None:
+                                cash_base_factor: float = 0.05, cash_base_amt: float = 75000, cash_ceiling: float = 500_000) -> None:
         '''
         This is where strategies can be tested and assigned a name
         '''
@@ -349,27 +382,72 @@ class Investments:
         cash = self.assets['cash']
         match strategy:
             case "Basic":
+                '''
+                Simplest strategy of investing a percentage (invest_factor) 
+                of income, regardless of on-hand cash.
+                '''
                 invest_amount = invest_factor*post_tax
             case "NWFraction":
+                '''
+                All post-tax income is put into cash, and a fraction
+                of available cash is invested each pay period.
+                '''
                 invest_amount = invest_factor*cash
             case "SafeNWFraction":
+                '''
+                If the cash on hand is more than a fixed value, invest a percent of
+                the available cash plus post-tax income. Otherwise, the same percent of post-tax income
+                without drawing from cash fund. Extra paycheck money goes to cash and expenses.
+                '''
                 invest_amount = ((invest_factor*cash+invest_factor*post_tax)
                                 if cash > cash_base_amt else invest_factor*post_tax)
             case "SafeNWCashFraction":
-                # Cash base factor is the percent of net asset value held
-                # in cash to start investing from cash reserve
+                ''' 
+                If the cash on hand is more than a percent of net assets, invest a percent of
+                the available cash plus post-tax income. Otherwise, the same percent of post-tax income
+                without drawing from cash fund. Extra paycheck money goes to cash and expenses.
+
+                The cash_base factor acts as a security measure to prevent overinvesting, allowing
+                an emergency fund as well as a means to directly pay taxes or make purchases while
+                maintaining a reasonable ratio of cash to investments.
+
+                invest_factor is the percentage of extra cash and post-tax income to put into an investment.
+
+                cash_base_amt is a fallback safety to have a fixed amount of cash at minimum before investing
+                from savings.
+                '''
                 invest_amount = ((invest_factor*cash+invest_factor*post_tax)
-                                if cash > cash_base_factor*self.get_asset_value()
+                                if cash > cash_base_factor*self.get_asset_value() + cash_base_amt
                                 else invest_factor*post_tax)
-            case "NWTaxRatio":
-                invest_amount = 0
-            case "template3":
-                invest_amount = 0
+            case "CashRatioCeiling":
+                '''
+                Invest extra cash above a factor of the next expected dividend tax amount, otherwise same as safenwcashfraction
+                '''
+                invest_amount = (
+                    invest_factor * post_tax + invest_factor * cash + (cash - cash_ceiling)
+                    if cash > cash_ceiling else
+                    invest_factor * cash + invest_factor * post_tax
+                    if cash > cash_base_factor * self.get_asset_value() + cash_base_amt else
+                    invest_factor * post_tax
+                )
+                pass
+            case "SafeNWDividendRatio": #90%
+                invest_amount = ((invest_factor*cash+invest_factor*post_tax)
+                                if cash > cash_base_factor*self.get_asset_value() + cash_base_amt
+                                else invest_factor*post_tax)
+            case "ForrestStrategy": #90%
+                invest_amount = invest_factor*post_tax
             case "NoInvest":
-                invest_amount = 0
+                '''
+                Put all earnings into cash without any investment
+                '''
+                pass
             case _:
-                invest_amount = 0
+                pass
+            
         self.compound_stocks(self.market_growth, invest_amount, self.std_dev)
+        
+            
 
 def get_monthly_cost(house_cost: float, interest_rate: float, term_length: float, down_pay_amt: float) -> float:
     """Calculates mortgage payment costs"""

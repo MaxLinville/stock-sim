@@ -1,0 +1,6 @@
+**/__pycache__/
+venv
+/profiles
+scratchpad.py
+test_file.py
+**.pyc

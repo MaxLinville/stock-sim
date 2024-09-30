@@ -36,7 +36,7 @@ def create_3d_graph(x: list, y: list, z: list, xtitle: str, ytitle: str, ztitle:
             return "Feasible 1.1-50x Tax"
         if 0.05 <= x <= 0.95:
             return "Extreme Boundaries 1-100x Tax"
-        if x == -0.1:
+        if x < 0:
             return "Negative Cash Reached"
         return "Not Usable"
 
@@ -63,7 +63,7 @@ def create_3d_graph(x: list, y: list, z: list, xtitle: str, ytitle: str, ztitle:
     # Liquid Assets labels
     Z1bounds = [int(min(Z.flatten())),int(max(Z.flatten()))]
     Z1Diff = Z1bounds[1]-Z1bounds[0]
-    print(Z1bounds, Z1Diff)
+    #print(Z1bounds, Z1Diff)
     cbar = fig.colorbar(mesh, ticks=list(range(Z1bounds[0],Z1bounds[1],Z1Diff//20 or 1)))
     cbar.formatter = FuncFormatter(millions_formatter)
     cbar.set_label(f"{ztitle}")
@@ -73,9 +73,9 @@ def create_3d_graph(x: list, y: list, z: list, xtitle: str, ytitle: str, ztitle:
 
     Z2bounds = [min(Z2.flatten()),max(Z2.flatten())]
     Z2Diff = Z2bounds[1]-Z2bounds[0]
-    print(Z2bounds, Z2Diff, int(int(Z2bounds[0]*100)), int(Z2bounds[1]*100+1))
+    #print(Z2bounds, Z2Diff, int(Z2bounds[0]*100), int(Z2bounds[1]*100+1))
     cbar2 = fig.colorbar(mesh2, ticks=tax_ratio_vals if tax_ratio\
-                        else list(range(Z2bounds[0],Z2bounds[1],Z2Diff//20 or 1)))
+                        else list(range(int(Z2bounds[0]),int(Z2bounds[1]),int(Z2Diff//20) or 1)))
     cbar2.formatter = FuncFormatter(millions_formatter if not tax_ratio else ratio_formatter)
     cbar2.set_label(f"{z2title}")
     cbar.update_ticks()
@@ -143,7 +143,8 @@ def create_stat_graph(x: list, y: list, ytitle: str) -> None:
     ax1.set_ylabel(f"{ytitle}", labelpad=20)
     ax1.set_xticks([])
     ax1.yaxis.set_major_formatter(FuncFormatter(millions_formatter))
-    ax1.legend()
+    handles, labels = ax1.get_legend_handles_labels()
+    ax1.legend(handles, labels)
 
     ax2 = plt.subplot(gs[1])
     ax2.scatter(x,y,marker='.',s=10)
@@ -196,7 +197,8 @@ def create_2d_time_graph(x: list, y: list, xtitle: str, ytitle: str, y2: list, y
     ax1.set_xticks([52*n for n in range(len(x)//52+1)])
     ax1.xaxis.set_major_formatter(FuncFormatter(year_formatter))
     ax1.yaxis.set_major_formatter(FuncFormatter(millions_formatter))
-    ax1.legend()
+    handles, labels = ax1.get_legend_handles_labels()
+    ax1.legend(handles, labels)
 
     ax2 = plt.subplot(gs[1])
     ax2.plot(x,y2, color='black')
