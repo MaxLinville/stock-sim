@@ -15,11 +15,10 @@ def load_config(file_path):
         config = json.load(file)
     return config
 
-
 def main():
     # Load the parameters from the config file
     current_path = os.path.dirname(__file__)
-    filename = "idealConfig"
+    filename = "realisticConfig"
     config_path = f"./stock_sim/database/configs/{filename}.json"
     params = load_config(os.path.join(current_path,config_path))
     

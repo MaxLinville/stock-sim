@@ -4,3 +4,5 @@ venv
 scratchpad.py
 test_file.py
 **.pyc
+line_counter.ps1
+*.cpython-311
