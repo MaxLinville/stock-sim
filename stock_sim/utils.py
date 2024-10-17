@@ -2,7 +2,6 @@ from datetime import timedelta, datetime
 import random
 import pandas as pd
 
-
 def pull_random_range(file_path, num_years, starting_date=None):
             # Read the CSV file into a DataFrame
             df = pd.read_csv(file_path, parse_dates=['Date'])
