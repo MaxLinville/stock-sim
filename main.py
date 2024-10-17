@@ -28,16 +28,16 @@ def main():
     # Uncomment any simulation you want to run
     # run_stat_sim(params, 500)
     # run_stat_sim_retirement(params, 500)
-    run_time_sim(params)
+    # run_time_sim(params)
     # run_2v_sims(params, 
     #             {'min': 0, 'max': 1, 'increment': 0.1, 'name': 'cash_base_factor'},
     #             {'min': 0, 'max': 1, 'increment': 0.1, 'name': 'invest_factor'}
     #             )
 
     # Run the optimization simulation
-    # find_best_2v(params, 
-    #             {'min': 0.01, 'max': 1, 'increment': 0.01, 'name': 'invest_factor'},
-    #             {'min': 66000, 'max': 150000, 'increment': 1000, 'name': 'income'})
+    find_best_2v(params, 
+                {'min': 0.01, 'max': 1, 'increment': 0.02, 'name': 'invest_factor'},
+                {'min': 65000, 'max': 150000, 'increment': 5000, 'name': 'income'})
 
 if __name__ == '__main__':
     main()

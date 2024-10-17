@@ -1,5 +1,7 @@
 **/__pycache__/
-venv
+venv_3_11
+venv_3_12
+venv_3_13
 /profiles
 scratchpad.py
 test_file.py
